@@ -12,8 +12,17 @@ import {
   useColorModeValue,
   Container,
 } from "@chakra-ui/react";
+import { useState } from "react";
 
 function App() {
+  const [data, setData] = useState([
+    {
+      id: 1,
+      masukkan: "({[ nabil_aba ]})",
+      hasil: true,
+    },
+  ]);
+  const [masukkan, setMasukkan] = useState("");
   const checkParentheses = (s) => {
     let stack = new Tools();
     if (s == "") return false;
@@ -50,17 +59,33 @@ function App() {
 
   const HandleSubmit = (e) => {
     e.preventDefault();
-    const input = e.target.elements.input.value;
-    const result = checkParentheses(input);
-    alert(result);
+    setData([
+      ...data,
+      {
+        id: data.length + 1,
+        masukkan: masukkan,
+        hasil: checkParentheses(masukkan),
+      },
+    ]);
+    setMasukkan("");
   };
 
   return (
     <Container maxW="lg">
-      <Flex minH={"100vh"} align={"center"} justify={"center"}>
+      <Flex
+        minH={"100vh"}
+        align={"center"}
+        justify={"center"}
+        direction="column"
+        gap={8}
+      >
         <Stack spacing={8} w="full">
           <Stack align="center">
-            <Heading fontSize={{ base: "xl", sm: "3xl" }}>
+            <Heading
+              fontSize={{ base: "xl", sm: "3xl" }}
+              bgGradient="linear(to-l, #7928CA, #FF0080)"
+              bgClip="text"
+            >
               Parentheses Validation
             </Heading>
             <Text
@@ -95,28 +120,71 @@ function App() {
               onSubmit={HandleSubmit}
             >
               <FormControl isRequired>
-                <FormLabel>Input</FormLabel>
+                <FormLabel>Kalimat</FormLabel>
                 <Input
                   type="text"
-                  placeholder="Input string"
+                  placeholder="Masukkan kalimat yang ingin dicek"
                   rounded="md"
                   name="input"
+                  value={masukkan}
+                  onChange={(e) => setMasukkan(e.target.value)}
                 />
               </FormControl>
               <Button
-                bg="blue.400"
+                bgGradient="linear(to-l, #7928CA,#FF0080)"
                 color="white"
                 _hover={{
-                  bg: "blue.500",
+                  transform: "translateY(-2px)",
                 }}
                 rounded="md"
                 w="100%"
                 type="submit"
               >
-                Check
+                Cek
               </Button>
             </Stack>
           </Box>
+        </Stack>
+        <Stack w="full" spacing={2}>
+          {data.length > 0 &&
+            data.map((item, index) => (
+              <Stack w="full" key={index}>
+                <Box pos="relative">
+                  <Box
+                    pos="absolute"
+                    top="-2px"
+                    right="-2px"
+                    bottom="-2px"
+                    left="-2px"
+                    rounded="lg"
+                    bgGradient="linear(to-l, #7928CA,#FF0080)"
+                  ></Box>
+                  <Box
+                    pos="relative"
+                    bg={useColorModeValue("white", "gray.800")}
+                    rounded="lg"
+                    px={4}
+                    py={2}
+                  >
+                    <Text as="p">
+                      Data:{" "}
+                      <Text as="span" fontWeight="bold">
+                        {item.masukkan}
+                      </Text>
+                    </Text>
+                    <Text as="p">
+                      Hasil Validasi:{" "}
+                      <Text
+                        as="span"
+                        color={item.hasil ? "green.500" : "red.500"}
+                      >
+                        {item.hasil ? "True" : "False"}
+                      </Text>
+                    </Text>
+                  </Box>
+                </Box>
+              </Stack>
+            ))}
         </Stack>
       </Flex>
     </Container>
