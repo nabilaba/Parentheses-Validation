@@ -11,10 +11,13 @@ import {
   Text,
   useColorModeValue,
   Container,
+  IconButton,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 function App() {
+  const [masukkan, setMasukkan] = useState("");
   const [data, setData] = useState([
     {
       id: 1,
@@ -22,7 +25,6 @@ function App() {
       hasil: true,
     },
   ]);
-  const [masukkan, setMasukkan] = useState("");
   const checkParentheses = (s) => {
     let stack = new Tools();
     if (s == "") return false;
@@ -58,16 +60,20 @@ function App() {
   };
 
   const HandleSubmit = (e) => {
-    e.preventDefault();
     setData([
-      ...data,
       {
         id: data.length + 1,
         masukkan: masukkan,
         hasil: checkParentheses(masukkan),
       },
+      ...data,
     ]);
     setMasukkan("");
+    e.preventDefault();
+  };
+
+  const deleteData = (id) => {
+    setData(data.filter((item) => item.id != id));
   };
 
   return (
@@ -78,6 +84,7 @@ function App() {
         justify={"center"}
         direction="column"
         gap={8}
+        py={10}
       >
         <Stack spacing={8} w="full">
           <Stack align="center">
@@ -146,45 +153,54 @@ function App() {
           </Box>
         </Stack>
         <Stack w="full" spacing={2}>
-          {data.length > 0 &&
-            data.map((item, index) => (
-              <Stack w="full" key={index}>
-                <Box pos="relative">
-                  <Box
-                    pos="absolute"
-                    top="-2px"
-                    right="-2px"
-                    bottom="-2px"
-                    left="-2px"
-                    rounded="lg"
-                    bgGradient="linear(to-l, #7928CA,#FF0080)"
-                  ></Box>
-                  <Box
-                    pos="relative"
-                    bg={useColorModeValue("white", "gray.800")}
-                    rounded="lg"
-                    px={4}
-                    py={2}
-                  >
-                    <Text as="p">
-                      Data:{" "}
-                      <Text as="span" fontWeight="bold">
-                        {item.masukkan}
+          {data.map((item, index) => (
+            <Stack w="full" key={index}>
+              <Box pos="relative">
+                <Box
+                  pos="absolute"
+                  top="-2px"
+                  right="-2px"
+                  bottom="-2px"
+                  left="-2px"
+                  rounded="lg"
+                  bgGradient="linear(to-l, #7928CA,#FF0080)"
+                ></Box>
+                <Box
+                  pos="relative"
+                  bg={useColorModeValue("white", "gray.800")}
+                  rounded="lg"
+                  px={4}
+                  py={2}
+                >
+                  <Flex align="center" justify="space-between">
+                    <Box>
+                      <Text as="p">
+                        Data:{" "}
+                        <Text as="span" fontWeight="bold">
+                          {item.masukkan}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text as="p">
-                      Hasil Validasi:{" "}
-                      <Text
-                        as="span"
-                        color={item.hasil ? "green.500" : "red.500"}
-                      >
-                        {item.hasil ? "True" : "False"}
+                      <Text as="p">
+                        Hasil Validasi:{" "}
+                        <Text
+                          as="span"
+                          color={item.hasil ? "green.500" : "red.500"}
+                        >
+                          {item.hasil ? "True" : "False"}
+                        </Text>
                       </Text>
-                    </Text>
-                  </Box>
+                    </Box>
+                    <IconButton
+                      colorScheme="blue"
+                      aria-label="Delete database"
+                      icon={<DeleteIcon />}
+                      onClick={() => deleteData(item.id)}
+                    />
+                  </Flex>
                 </Box>
-              </Stack>
-            ))}
+              </Box>
+            </Stack>
+          ))}
         </Stack>
       </Flex>
     </Container>
